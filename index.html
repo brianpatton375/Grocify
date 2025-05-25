@@ -1,197 +1,429 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Grocery Price Matcher</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            padding: 20px;
-            color: #333;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .image-placeholder {
-            width: 100%;
-            height: 200px;
-            background-color: #ddd;
-            border: 2px dashed #aaa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            color: #666;
-            font-style: italic;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        textarea {
-            width: 100%;
-            height: 100px;
-            padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1em;
-        }
-
-        button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-        }
-
-        button:hover {
-            background-color: #218838;
-        }
-
-        .results {
-            margin-top: 30px;
-        }
-
-        .price-card {
-            background-color: #f0f8ff;
-            border-left: 5px solid #007bff;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-
-        .price-card p {
-            margin: 0;
-        }
-
-        .site-image {
-            width: 100%;
-            max-height: 200px;
-            object-fit: contain;
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table th, table td {
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        table th {
-            background-color: #007bff;
-            color: white;
-        }
-
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Grocery Price Matcher Enhanced</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0; padding: 0;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f5f5;
+    padding: 20px;
+    color: #333;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  textarea {
+    width: 100%;
+    height: 120px;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    resize: vertical;
+  }
+  button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #218838;
+  }
+  .results {
+    margin-top: 25px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  th, td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    text-align: left;
+    background-color: #007bff;
+    color: white;
+  }
+  td.price, td.qty, td.unit {
+    text-align: right;
+  }
+  input.qty-input, input.weight-input, select.size-select {
+    width: 60px;
+    padding: 4px;
+    font-size: 1em;
+    text-align: right;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  input.qty-input:focus, input.weight-input:focus, select.size-select:focus {
+    outline: none;
+    border-color: #28a745;
+    box-shadow: 0 0 5px #28a745;
+  }
+  .total-row {
+    font-weight: bold;
+    background-color: #f0f8ff;
+  }
+  .site-image {
+    width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    display: block;
+  }
+  .store-filter {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .coupon-section {
+    margin-top: 25px;
+    background: #e7f4e4;
+    border: 1px solid #a0d468;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  .coupon-section h3 {
+    margin-bottom: 10px;
+  }
+</style>
 </head>
 <body>
-    <header>
-        <h1>Grocery Price Matcher</h1>
-        <p>Enter your grocery list and get estimated prices.</p>
-    </header>
 
-    <div class="container">
-        <img src="Grocify(1).jpg" alt="Grocery Image" class="site-image">
+<header>
+  <h1>Grocery Price Matcher Enhanced</h1>
+  <p>Enter your grocery list and get estimated prices with flexible quantities and filtering.</p>
+</header>
 
-        <label for="groceryList">Grocery List (one item per line):</label>
-        <textarea id="groceryList" placeholder="e.g., milk&#10;eggs&#10;bread"></textarea>
-        <button onclick="comparePrices()">Compare Prices</button>
+<div class="container">
+  <img src="Grocify(1).jpg" alt="Grocery image" class="site-image" />
 
-        <div class="results" id="results"></div>
-    </div>
+  <label for="groceryList">Grocery List (one item per line):</label>
+  <textarea id="groceryList" placeholder="e.g., chicken breast\npotato chips\ncarrots"></textarea>
+  <button onclick="comparePrices()">Compare Prices</button>
 
-    <script>
-        function comparePrices() {
-            const list = document.getElementById('groceryList').value.trim().split('\n');
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '<h2>Price Comparison Results:</h2>';
+  <div class="store-filter" style="display:none;">
+    <label><input type="checkbox" checked class="store-checkbox" value="A" /> Store A</label>
+    <label><input type="checkbox" checked class="store-checkbox" value="B" /> Store B</label>
+    <label><input type="checkbox" checked class="store-checkbox" value="C" /> Store C</label>
+  </div>
 
-            let totalA = 0, totalB = 0, totalC = 0;
+  <div class="results" id="results"></div>
 
-            const table = document.createElement('table');
-            table.style.width = '100%';
-            table.style.borderCollapse = 'collapse';
-            table.innerHTML = `
-                <tr>
-                    <th style="text-align:left;">Item</th>
-                    <th style="text-align:right;">Qty</th>
-                    <th style="text-align:right;">Store A</th>
-                    <th style="text-align:right;">Store B</th>
-                    <th style="text-align:right;">Store C</th>
-                </tr>
-            `;
+  <div class="coupon-section" style="display:none;">
+    <h3>Coupon & Deal Suggestions</h3>
+    <ul id="couponList"></ul>
+  </div>
+</div>
 
-            list.forEach(item => {
-                item = item.trim();
-                if (item !== '') {
-                    const quantity = prompt(`How many of "${item}" do you need?`, 1);
-                    const qty = parseFloat(quantity);
-                    const validQty = (qty > 0) ? qty : 1;
+<script>
+  // --- Category Detection (very basic keyword matching)
+  function detectCategory(item) {
+    const lower = item.toLowerCase();
+    if (/(chicken|beef|pork|steak|meat|bacon|sausage|turkey|fish|salmon|shrimp)/.test(lower)) return 'meat';
+    if (/(chip|snack|cracker|cookie|candy|popcorn|nuts|pretzel)/.test(lower)) return 'snack';
+    if (/(carrot|potato|tomato|lettuce|onion|broccoli|pepper|cucumber|vegetable|spinach|celery)/.test(lower)) return 'vegetable';
+    return 'other';
+  }
 
-                    const priceA = parseFloat((Math.random() * 3 + 1).toFixed(2));
-                    const priceB = parseFloat((Math.random() * 3 + 1).toFixed(2));
-                    const priceC = parseFloat((Math.random() * 3 + 1).toFixed(2));
+  // --- Price generation for demo (could be replaced by actual data/API)
+  function generatePrices(item) {
+    // Base price varies by category to feel more realistic
+    const cat = detectCategory(item);
+    let base = 1;
+    switch(cat) {
+      case 'meat': base = 5; break;
+      case 'snack': base = 2.5; break;
+      case 'vegetable': base = 1.5; break;
+      default: base = 2;
+    }
+    // Random price variations per store
+    return {
+      A: +(base + Math.random() * 3).toFixed(2),
+      B: +(base + Math.random() * 3).toFixed(2),
+      C: +(base + Math.random() * 3).toFixed(2)
+    };
+  }
 
-                    totalA += validQty * priceA;
-                    totalB += validQty * priceB;
-                    totalC += validQty * priceC;
+  // --- Coupon/Deal suggestions (basic placeholder logic)
+  function generateCoupons(items) {
+    const coupons = [];
+    items.forEach(item => {
+      const cat = detectCategory(item);
+      if(cat === 'meat') {
+        coupons.push(`10% off on all meat items like "${item}" at Store A!`);
+      } else if (cat === 'snack') {
+        coupons.push(`Buy 1 Get 1 Free deal for "${item}" at Store B!`);
+      } else if (cat === 'vegetable') {
+        coupons.push(`Save $0.50 on "${item}" at Store C.`);
+      }
+    });
+    return coupons;
+  }
 
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td style="padding: 8px;">${item}</td>
-                        <td style="text-align:right; padding: 8px;">${validQty}</td>
-                        <td style="text-align:right; padding: 8px;">$${(validQty * priceA).toFixed(2)}</td>
-                        <td style="text-align:right; padding: 8px;">$${(validQty * priceB).toFixed(2)}</td>
-                        <td style="text-align:right; padding: 8px;">$${(validQty * priceC).toFixed(2)}</td>
-                    `;
-                    table.appendChild(row);
-                }
-            });
+  function comparePrices() {
+    const list = document.getElementById('groceryList').value.trim().split('\n').map(s => s.trim()).filter(s => s.length);
+    const resultsDiv = document.getElementById('results');
+    const storeFilterDiv = document.querySelector('.store-filter');
+    const couponSection = document.querySelector('.coupon-section');
+    const couponList = document.getElementById('couponList');
 
-            const totalRow = document.createElement('tr');
-            totalRow.innerHTML = `
-                <td style="padding: 8px;"><strong>Total</strong></td>
-                <td></td>
-                <td style="text-align:right; padding: 8px;"><strong>$${totalA.toFixed(2)}</strong></td>
-                <td style="text-align:right; padding: 8px;"><strong>$${totalB.toFixed(2)}</strong></td>
-                <td style="text-align:right; padding: 8px;"><strong>$${totalC.toFixed(2)}</strong></td>
-            `;
-            table.appendChild(totalRow);
+    if(list.length === 0){
+      resultsDiv.innerHTML = '<p>Please enter some grocery items.</p>';
+      storeFilterDiv.style.display = 'none';
+      couponSection.style.display = 'none';
+      return;
+    }
 
-            resultsDiv.appendChild(table);
+    resultsDiv.innerHTML = '<h2>Price Comparison Results:</h2>';
+
+    storeFilterDiv.style.display = 'flex';
+
+    // Store selected checkboxes
+    const selectedStores = new Set(['A','B','C']);
+
+    const checkboxes = document.querySelectorAll('.store-checkbox');
+    checkboxes.forEach(cb => {
+      cb.checked = true;
+      cb.onchange = () => {
+        selectedStores.clear();
+        checkboxes.forEach(c => { if(c.checked) selectedStores.add(c.value); });
+        updateTotals();
+        updateStoreColumns();
+      };
+    });
+
+    // Data structures
+    const priceData = []; // array of {item, category, prices, qty, unit, size}
+
+    // Clear old table if any
+    resultsDiv.innerHTML = '<h2>Price Comparison Results:</h2>';
+
+    // Create table
+    const table = document.createElement('table');
+
+    // Build header with dynamic store columns
+    function buildHeader() {
+      let headerHtml = `<tr>
+        <th>Item</th>
+        <th>Qty</th>
+        <th>Unit</th>`;
+
+      if(selectedStores.has('A')) headerHtml += `<th class="storeA">Store A</th>`;
+      if(selectedStores.has('B')) headerHtml += `<th class="storeB">Store B</th>`;
+      if(selectedStores.has('C')) headerHtml += `<th class="storeC">Store C</th>`;
+
+      headerHtml += `</tr>`;
+      table.innerHTML = headerHtml;
+    }
+
+    buildHeader();
+
+    // Add rows with inputs based on category
+    list.forEach((item, index) => {
+      const category = detectCategory(item);
+      const prices = generatePrices(item);
+
+      // default qty and unit
+      let qtyInputHTML = '';
+      let unitHTML = '';
+
+      // Different quantity input per category
+      if(category === 'meat') {
+        // Weight input (lbs)
+        qtyInputHTML = `<input type="number" min="0" step="0.1" value="1" class="weight-input" data-index="${index}" title="Weight in lbs"/>`;
+        unitHTML = 'lbs';
+      } else if(category === 'snack') {
+        // Packages with size selection
+        qtyInputHTML = `<input type="number" min="0" step="1" value="1" class="qty-input" data-index="${index}" title="Number of packages"/>`;
+        unitHTML = `<select class="size-select" data-index="${index}" title="Package size">
+                      <option value="small">Small</option>
+                      <option value="medium" selected>Medium</option>
+                      <option value="large">Large</option>
+                    </select>`;
+      } else if(category === 'vegetable') {
+        // Individual count
+        qtyInputHTML = `<input type="number" min="0" step="1" value="1" class="qty-input" data-index="${index}" title="Number of pieces"/>`;
+        unitHTML = 'pcs';
+      } else {
+        // Other simple qty
+        qtyInputHTML = `<input type="number" min="0" step="1" value="1" class="qty-input" data-index="${index}" title="Quantity"/>`;
+        unitHTML = '';
+      }
+
+      // Row HTML, show prices only for selected stores
+      let rowHtml = `<tr data-index="${index}">
+        <td>${item}</td>
+        <td class="qty">${qtyInputHTML}</td>
+        <td class="unit">${unitHTML}</td>`;
+
+      if(selectedStores.has('A')) rowHtml += `<td class="price storeA" data-store="A">$${prices.A.toFixed(2)}</td>`;
+      if(selectedStores.has('B')) rowHtml += `<td class="price storeB" data-store="B">$${prices.B.toFixed(2)}</td>`;
+      if(selectedStores.has('C')) rowHtml += `<td class="price storeC" data-store="C">$${prices.C.toFixed(2)}</td>`;
+
+      rowHtml += `</tr>`;
+
+      table.insertAdjacentHTML('beforeend', rowHtml);
+
+      priceData[index] = {item, category, prices, qty: 1, unit: (category === 'meat' ? 'lbs' : category === 'vegetable' ? 'pcs' : 'count'), size: 'medium'};
+    });
+
+    // Total row
+    function addTotalRow() {
+      // Remove old total row if any
+      const oldTotal = table.querySelector('.total-row');
+      if(oldTotal) oldTotal.remove();
+
+      let totalRowHtml = `<tr class="total-row">
+        <td><strong>Total</strong></td>
+        <td></td>
+        <td></td>`;
+
+      if(selectedStores.has('A')) totalRowHtml += `<td class="price totalA">$0.00</td>`;
+      if(selectedStores.has('B')) totalRowHtml += `<td class="price totalB">$0.00</td>`;
+      if(selectedStores.has('C')) totalRowHtml += `<td class="price totalC">$0.00</td>`;
+
+      totalRowHtml += `</tr>`;
+
+      table.insertAdjacentHTML('beforeend', totalRowHtml);
+    }
+
+    addTotalRow();
+
+    resultsDiv.appendChild(table);
+
+    // Update totals function
+    function updateTotals() {
+      let totalA = 0;
+      let totalB = 0;
+      let totalC = 0;
+
+      priceData.forEach((data, idx) => {
+        // Get qty
+        let qtyInput;
+        let qty = 1;
+        if(data.category === 'meat') {
+          qtyInput = document.querySelector(`input.weight-input[data-index="${idx}"]`);
+          qty = parseFloat(qtyInput?.value) || 0;
+        } else if(data.category === 'snack') {
+          qtyInput = document.querySelector(`input.qty-input[data-index="${idx}"]`);
+          let sizeSelect = document.querySelector(`select.size-select[data-index="${idx}"]`);
+          qty = parseInt(qtyInput?.value) || 0;
+          const size = sizeSelect?.value || 'medium';
+
+          // Size multiplier for snacks
+          let sizeMultiplier = 1;
+          if(size === 'small') sizeMultiplier = 0.75;
+          else if(size === 'medium') sizeMultiplier = 1;
+          else if(size === 'large') sizeMultiplier = 1.5;
+
+          qty *= sizeMultiplier;
+          priceData[idx].size = size;
+
+        } else if(data.category === 'vegetable') {
+          qtyInput = document.querySelector(`input.qty-input[data-index="${idx}"]`);
+          qty = parseInt(qtyInput?.value) || 0;
+        } else {
+          qtyInput = document.querySelector(`input.qty-input[data-index="${idx}"]`);
+          qty = parseInt(qtyInput?.value) || 0;
         }
-    </script>
+
+        data.qty = qty;
+
+        // Accumulate totals per store
+        if(selectedStores.has('A')) totalA += data.prices.A * qty;
+        if(selectedStores.has('B')) totalB += data.prices.B * qty;
+        if(selectedStores.has('C')) totalC += data.prices.C * qty;
+      });
+
+      // Update totals in table
+      if(selectedStores.has('A')) document.querySelector('.totalA').textContent = '$' + totalA.toFixed(2);
+      if(selectedStores.has('B')) document.querySelector('.totalB').textContent = '$' + totalB.toFixed(2);
+      if(selectedStores.has('C')) document.querySelector('.totalC').textContent = '$' + totalC.toFixed(2);
+    }
+
+    // Update store columns visibility function
+    function updateStoreColumns() {
+      ['A', 'B', 'C'].forEach(store => {
+        const visible = selectedStores.has(store);
+        // Header
+        const ths = table.querySelectorAll(`th.store${store}`);
+        ths.forEach(th => th.style.display = visible ? '' : 'none');
+        // Prices cells
+        const tds = table.querySelectorAll(`td.store${store}`);
+        tds.forEach(td => td.style.display = visible ? '' : 'none');
+      });
+    }
+
+    updateStoreColumns();
+
+    // Add event listeners for qty/weight/size inputs
+    function attachInputListeners() {
+      const weightInputs = document.querySelectorAll('input.weight-input');
+      weightInputs.forEach(input => {
+        input.oninput = updateTotals;
+      });
+
+      const qtyInputs = document.querySelectorAll('input.qty-input');
+      qtyInputs.forEach(input => {
+        input.oninput = updateTotals;
+      });
+
+      const sizeSelects = document.querySelectorAll('select.size-select');
+      sizeSelects.forEach(select => {
+        select.onchange = updateTotals;
+      });
+    }
+
+    attachInputListeners();
+
+    updateTotals();
+
+    // Show coupon/deal suggestions
+    couponSection.style.display = 'block';
+    couponList.innerHTML = '';
+    const coupons = generateCoupons(list);
+    if(coupons.length === 0){
+      couponList.innerHTML = '<li>No coupons available right now.</li>';
+    } else {
+      coupons.forEach(c => {
+        const li = document.createElement('li');
+        li.textContent = c;
+        couponList.appendChild(li);
+      });
+    }
+  }
+</script>
+
 </body>
 </html>
