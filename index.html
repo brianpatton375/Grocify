@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Grocery Price Matcher</title>
+    <title>Grocery Price Matcher & Recipe Planner</title>
     <style>
+        /* Existing CSS */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -16,6 +17,7 @@
             background-color: #f5f5f5;
             padding: 20px;
             color: #333;
+            line-height: 1.6;
         }
 
         header {
@@ -26,6 +28,7 @@
         h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
+            color: #28a745;
         }
 
         .site-image {
@@ -34,6 +37,7 @@
             object-fit: contain;
             margin-bottom: 20px;
             border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .container {
@@ -42,35 +46,67 @@
             background-color: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
         }
 
-        textarea, input {
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        textarea, input[type="text"], input[type="number"] {
             width: 100%;
             padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus, input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #28a745;
         }
 
         button {
             background-color: #28a745;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 25px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 1.05em;
+            margin-right: 10px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
         button:hover {
             background-color: #218838;
+            transform: translateY(-2px);
         }
 
-        .results {
+        button:active {
+            transform: translateY(0);
+        }
+
+        .results, .recipes-section, .spending-graph, .coupons-section, .store-list-section {
             margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .results h2, .recipes-section h2, .spending-graph h2, .coupons-section h2, .store-list-section h2 {
+            color: #28a745;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
         }
 
         table {
@@ -80,8 +116,8 @@
         }
 
         th, td {
-            padding: 10px;
-            border-bottom: 1px solid #ccc;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
             text-align: right;
         }
 
@@ -90,30 +126,284 @@
         }
 
         th {
-            background-color: #f0f0f0;
+            background-color: #e6ffe6; /* Lighter green for headers */
+            font-weight: bold;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2fcf2; /* Very light green for even rows */
+        }
+
+        tr:hover {
+            background-color: #e0f8e0;
+        }
+
+        .total-row strong {
+            color: #007000; /* Darker green for total */
+            font-size: 1.1em;
+        }
+
+        .recipe-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .recipe-item h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .recipe-item p {
+            margin-bottom: 5px;
+        }
+
+        .recipe-item button {
+            background-color: #dc3545; /* Red for remove */
+            margin-top: 10px;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        .recipe-item button:hover {
+            background-color: #c82333;
+        }
+
+        .slider-container {
+            margin-top: 20px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #e6f7ff; /* Light blue for slider */
+            border-radius: 8px;
+            border: 1px solid #cceeff;
+        }
+
+        .slider-container label {
+            font-weight: bold;
+            color: #0056b3;
+        }
+
+        #distanceRange {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        #distanceValue {
+            font-weight: bold;
+            color: #0056b3;
+        }
+
+        #storeList ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #storeList li {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #storeList li span {
+            font-weight: bold;
+        }
+
+        /* Chart.js container */
+        #spendingChartContainer {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Grocery Price Matcher</h1>
-        <p>Enter your grocery list, location, and compare prices!</p>
+        <h1>Grocery Price Matcher & Recipe Planner</h1>
+        <p>Enter your grocery list, location, and compare prices across local stores!</p>
+        <p>Plan your meals and estimate costs with our recipe tool.</p>
     </header>
 
     <div class="container">
-        <img src="logo.jpg" alt="Logo" class="site-image" />
+        <img src="https://via.placeholder.com/800x200?text=Your+Grocery+Site+Banner" alt="Grocery Site Banner" class="site-image" />
 
         <label for="zipCode">Enter ZIP code or address:</label>
         <input type="text" id="zipCode" placeholder="e.g., 28401 or 123 Main St" />
+        <button onclick="findNearbyStores()">Find Nearby Stores</button>
 
-        <label for="groceryList">Grocery List (one item per line):</label>
+        <div class="slider-container">
+            <label for="distanceRange">Filter Stores by Distance: <span id="distanceValue">10</span> miles</label>
+            <input type="range" id="distanceRange" min="1" max="50" value="10" oninput="document.getElementById('distanceValue').innerText = this.value">
+        </div>
+
+        <div class="store-list-section" id="nearbyStoresSection" style="display: none;">
+            <h2>Nearby Grocery Stores (<span id="filteredStoreCount">0</span> found within <span id="currentDistanceFilter">10</span> miles)</h2>
+            <ul id="storeList">
+                </ul>
+        </div>
+
+        <label for="groceryList">Grocery List (one item per line, e.g., milk, ground beef, 1 bag chips):</label>
         <textarea id="groceryList" placeholder="e.g., milk&#10;ground beef&#10;chips&#10;lettuce"></textarea>
-        <button onclick="comparePrices()">Compare Prices</button>
+        <button onclick="comparePrices()">Compare Prices for List</button>
 
-        <div class="results" id="results"></div>
+        <div class="results" id="results" style="display: none;"></div>
+
+        <div class="coupons-section" id="couponsSection" style="display: none;">
+            <h2>Potential Coupons & Deals</h2>
+            <div id="couponList">
+                <p>No active coupons found for your area. Check back later!</p>
+                </div>
+        </div>
     </div>
 
+    <div class="container recipes-section">
+        <h2>Recipe Planner & Cost Calculator</h2>
+        <label for="recipeName">Recipe Name:</label>
+        <input type="text" id="recipeName" placeholder="e.g., Spaghetti Bolognese" />
+
+        <label for="recipeIngredients">Recipe Ingredients (one ingredient per line with quantity, e.g., 1 lb Ground Beef):</label>
+        <textarea id="recipeIngredients" placeholder="e.g., 1 lb Ground Beef&#10;1 can Diced Tomatoes&#10;1 pkg Spaghetti"></textarea>
+
+        <label for="servings">Servings:</label>
+        <input type="number" id="servings" value="4" min="1">
+
+        <button onclick="addRecipe()">Add Recipe</button>
+        <button onclick="calculateRecipeCosts()">Calculate All Recipe Costs</button>
+
+        <h3>Your Saved Recipes:</h3>
+        <div id="savedRecipes">
+            <p>No recipes added yet.</p>
+            </div>
+    </div>
+
+    <div class="container spending-graph">
+        <h2>Your Spending Breakdown</h2>
+        <div id="spendingChartContainer">
+            <canvas id="spendingChart"></canvas>
+            <p style="text-align: center; margin-top: 15px;">(Graph showing spending on different categories will appear here. Requires a charting library like Chart.js.)</p>
+        </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBoPppndOg3owtgXyfjCxiB7oquKuuYsq0&libraries=places,geometry"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
+        const API_KEY = 'AIzaSyBoPppndOg3owtgXyfjCxiB7oquKuuYsq0'; // Your Google Maps API Key
+        let map; // Google Map object
+        let service; // Google Places Service
+        let userLocation = null; // Stores user's LatLng
+
+        // Mock data for stores and prices (replace with real data from backend)
+        const mockStores = [
+            { id: 'storeA', name: 'BestBuy Groceries', lat: 34.2257, lng: -77.9447, review: 4.5, prices: { 'milk': 3.29, 'ground beef': 5.99, 'chips': 3.00, 'lettuce': 2.49, 'spaghetti': 1.50, 'diced tomatoes': 1.20 } },
+            { id: 'storeB', name: 'FreshMarket Co.', lat: 34.2345, lng: -77.9300, review: 4.2, prices: { 'milk': 3.10, 'ground beef': 6.20, 'chips': 2.80, 'lettuce': 2.60, 'spaghetti': 1.60, 'diced tomatoes': 1.10 } },
+            { id: 'storeC', name: 'ValueMart', lat: 34.2180, lng: -77.9550, review: 3.8, prices: { 'milk': 3.00, 'ground beef': 5.75, 'chips': 3.20, 'lettuce': 2.30, 'spaghetti': 1.40, 'diced tomatoes': 1.30 } },
+            { id: 'storeD', name: 'GreenGrocer', lat: 34.2400, lng: -77.9100, review: 4.8, prices: { 'milk': 3.40, 'ground beef': 6.50, 'chips': 3.10, 'lettuce': 2.70, 'spaghetti': 1.70, 'diced tomatoes': 1.25 } },
+            { id: 'storeE', name: 'DailyDeals', lat: 34.2000, lng: -77.9600, review: 4.0, prices: { 'milk': 2.90, 'ground beef': 5.50, 'chips': 2.90, 'lettuce': 2.20, 'spaghetti': 1.35, 'diced tomatoes': 1.00 } }
+        ];
+
+        // Initialize Google Maps Autocomplete
+        function initAutocomplete() {
+            const input = document.getElementById('zipCode');
+            const autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete.addListener('place_changed', function () {
+                const place = autocomplete.getPlace();
+                if (place.geometry && place.geometry.location) {
+                    userLocation = place.geometry.location;
+                    console.log('User Location:', userLocation.lat(), userLocation.lng());
+                    // You can now use userLocation for distance calculations
+                } else {
+                    console.error('Place not found or no geometry available.');
+                }
+            });
+        }
+
+        // Call initAutocomplete once the Google Maps API is loaded
+        google.maps.event.addDomListener(window, 'load', initAutocomplete);
+
+        async function findNearbyStores() {
+            const address = document.getElementById('zipCode').value.trim();
+            if (!address) {
+                alert("Please enter a ZIP code or address to find nearby stores.");
+                return;
+            }
+
+            // Geocode the address if it's not already set from autocomplete
+            if (!userLocation) {
+                try {
+                    const geocoder = new google.maps.Geocoder();
+                    const response = await geocoder.geocode({ 'address': address });
+                    if (response.results.length > 0) {
+                        userLocation = response.results[0].geometry.location;
+                        console.log('Geocoded User Location:', userLocation.lat(), userLocation.lng());
+                    } else {
+                        alert("Could not find location for the entered address/ZIP code.");
+                        return;
+                    }
+                } catch (error) {
+                    console.error("Geocoding failed:", error);
+                    alert("Error finding your location. Please try again.");
+                    return;
+                }
+            }
+
+            const storeListElement = document.getElementById('storeList');
+            storeListElement.innerHTML = ''; // Clear previous list
+            document.getElementById('nearbyStoresSection').style.display = 'block';
+
+            // Filter mock stores by distance
+            filterStores();
+        }
+
+        function filterStores() {
+            if (!userLocation) {
+                document.getElementById('storeList').innerHTML = '<li>Please enter your location first.</li>';
+                document.getElementById('filteredStoreCount').innerText = '0';
+                return;
+            }
+
+            const maxDistanceMiles = parseFloat(document.getElementById('distanceRange').value);
+            document.getElementById('currentDistanceFilter').innerText = maxDistanceMiles;
+            const storeListElement = document.getElementById('storeList');
+            storeListElement.innerHTML = '';
+            let filteredCount = 0;
+
+            mockStores.forEach(store => {
+                const storeLatLng = new google.maps.LatLng(store.lat, store.lng);
+                const distanceMeters = google.maps.geometry.spherical.computeDistanceBetween(userLocation, storeLatLng);
+                const distanceMiles = distanceMeters * 0.000621371; // Convert meters to miles
+
+                if (distanceMiles <= maxDistanceMiles) {
+                    filteredCount++;
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <span>${store.name}</span>
+                        <span>${distanceMiles.toFixed(1)} miles away</span>
+                        <span>Rating: ${store.review} &#9733;</span>
+                    `;
+                    storeListElement.appendChild(listItem);
+                }
+            });
+
+            document.getElementById('filteredStoreCount').innerText = filteredCount;
+            if (filteredCount === 0) {
+                storeListElement.innerHTML = '<li>No stores found within the selected distance.</li>';
+            }
+        }
+
+        // Add event listener for slider change
+        document.getElementById('distanceRange').addEventListener('input', filterStores);
+
+
         function getQuantity(item) {
             item = item.toLowerCase();
 
@@ -150,65 +440,281 @@
             }
 
             const list = document.getElementById('groceryList').value.trim().split('\n');
+            if (list.filter(item => item.trim()).length === 0) {
+                alert("Please enter items in your grocery list.");
+                return;
+            }
+
             const resultsDiv = document.getElementById('results');
+            resultsDiv.style.display = 'block'; // Show results section
             resultsDiv.innerHTML = '<h2>Price Comparison Results:</h2>';
 
-            let totalA = 0, totalB = 0, totalC = 0;
+            let storeTotals = {};
+            mockStores.forEach(store => storeTotals[store.id] = 0);
 
             const table = document.createElement('table');
             table.innerHTML = `
-                <tr>
-                    <th>Item</th>
-                    <th>Qty</th>
-                    <th>Store A</th>
-                    <th>Store B</th>
-                    <th>Store C</th>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Qty</th>
+                        ${mockStores.map(store => `<th>${store.name}</th>`).join('')}
+                    </tr>
+                </thead>
+                <tbody></tbody>
             `;
+            const tbody = table.querySelector('tbody');
+
+            let categorySpending = {}; // For the graph
 
             list.forEach(rawItem => {
                 const item = rawItem.trim();
                 if (item) {
                     const { qty, label } = getQuantity(item);
-                    const priceA = (Math.random() * 3 + 1).toFixed(2);
-                    const priceB = (Math.random() * 3 + 1).toFixed(2);
-                    const priceC = (Math.random() * 3 + 1).toFixed(2);
-
-                    const total1 = qty * parseFloat(priceA);
-                    const total2 = qty * parseFloat(priceB);
-                    const total3 = qty * parseFloat(priceC);
-
-                    totalA += total1;
-                    totalB += total2;
-                    totalC += total3;
 
                     const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item}</td>
-                        <td>${qty} ${label}</td>
-                        <td>$${total1.toFixed(2)}</td>
-                        <td>$${total2.toFixed(2)}</td>
-                        <td>$${total3.toFixed(2)}</td>
-                    `;
-                    table.appendChild(row);
+                    let rowContent = `<td>${item}</td><td>${qty} ${label}</td>`;
+
+                    // Simple categorization for charting
+                    let category = 'Other';
+                    if (item.includes('milk') || item.includes('cheese')) category = 'Dairy';
+                    else if (item.includes('beef') || item.includes('chicken') || item.includes('pork')) category = 'Meat';
+                    else if (item.includes('chip') || item.includes('snack') || item.includes('cookie') || item.includes('candy')) category = 'Snacks';
+                    else if (item.includes('lettuce') || item.includes('carrot') || item.includes('tomato')) category = 'Produce';
+
+
+                    mockStores.forEach(store => {
+                        // Mock price lookup based on item and quantity
+                        let pricePerUnit = store.prices[item.toLowerCase()] || (Math.random() * 4 + 1).toFixed(2); // Fallback random price
+                        let totalPrice = (qty * parseFloat(pricePerUnit)).toFixed(2);
+                        storeTotals[store.id] += parseFloat(totalPrice);
+                        rowContent += `<td>$${totalPrice}</td>`;
+
+                        // Accumulate spending for categories
+                        if (!categorySpending[category]) {
+                            categorySpending[category] = 0;
+                        }
+                        // For simplicity, let's just add one store's price to the category spending
+                        // In a real app, you might average or pick the lowest price.
+                        categorySpending[category] += parseFloat(totalPrice);
+                    });
+                    row.innerHTML = rowContent;
+                    tbody.appendChild(row);
                 }
             });
 
             const totalRow = document.createElement('tr');
-            totalRow.innerHTML = `
-                <td><strong>Total</strong></td>
-                <td></td>
-                <td><strong>$${totalA.toFixed(2)}</strong></td>
-                <td><strong>$${totalB.toFixed(2)}</strong></td>
-                <td><strong>$${totalC.toFixed(2)}</strong></td>
-            `;
-            table.appendChild(totalRow);
+            totalRow.classList.add('total-row');
+            let totalRowContent = `<td><strong>Total</strong></td><td></td>`;
+            mockStores.forEach(store => {
+                totalRowContent += `<td><strong>$${storeTotals[store.id].toFixed(2)}</strong></td>`;
+            });
+            totalRow.innerHTML = totalRowContent;
+            tbody.appendChild(totalRow);
 
             resultsDiv.appendChild(table);
-        }
-    </script>
 
-    <!-- Google Maps JavaScript API for future location use -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBoPppndOg3owtgXyfjCxiB7oquKuuYsq0&libraries=places"></script>
+            // Display Best Prices & Reviews
+            let bestStoreId = null;
+            let lowestTotal = Infinity;
+            Object.keys(storeTotals).forEach(storeId => {
+                if (storeTotals[storeId] < lowestTotal) {
+                    lowestTotal = storeTotals[storeId];
+                    bestStoreId = storeId;
+                }
+            });
+
+            const bestStore = mockStores.find(store => store.id === bestStoreId);
+            if (bestStore) {
+                resultsDiv.innerHTML += `
+                    <h3>Best Overall Price:</h3>
+                    <p><strong>${bestStore.name}</strong> offers the lowest total for your list: <strong>$${lowestTotal.toFixed(2)}</strong> (Rating: ${bestStore.review} &#9733;)</p>
+                `;
+            }
+
+            // Update coupons section (mock)
+            document.getElementById('couponsSection').style.display = 'block';
+            document.getElementById('couponList').innerHTML = `
+                <p>Check out these mock deals:</p>
+                <ul>
+                    <li><strong>20% off all produce</strong> at FreshMarket Co. (valid until next Sunday)</li>
+                    <li>Buy one, get one free <strong>chips</strong> at ValueMart!</li>
+                    <li>Spend $50, get $5 off at BestBuy Groceries.</li>
+                </ul>
+            `;
+
+            // Draw spending graph
+            drawSpendingChart(categorySpending);
+        }
+
+        // --- Recipe Adder/Calculator ---
+        let recipes = JSON.parse(localStorage.getItem('savedRecipes')) || [];
+
+        function addRecipe() {
+            const recipeName = document.getElementById('recipeName').value.trim();
+            const recipeIngredients = document.getElementById('recipeIngredients').value.trim();
+            const servings = parseInt(document.getElementById('servings').value, 10);
+
+            if (!recipeName || !recipeIngredients || isNaN(servings) || servings <= 0) {
+                alert("Please fill in all recipe details correctly.");
+                return;
+            }
+
+            const newRecipe = {
+                name: recipeName,
+                ingredients: recipeIngredients.split('\n').map(ing => ing.trim()).filter(ing => ing),
+                servings: servings,
+                cost: null // Will be calculated
+            };
+
+            recipes.push(newRecipe);
+            localStorage.setItem('savedRecipes', JSON.stringify(recipes));
+            displaySavedRecipes();
+
+            // Clear form
+            document.getElementById('recipeName').value = '';
+            document.getElementById('recipeIngredients').value = '';
+            document.getElementById('servings').value = 4; // Reset to default
+        }
+
+        function displaySavedRecipes() {
+            const savedRecipesDiv = document.getElementById('savedRecipes');
+            savedRecipesDiv.innerHTML = ''; // Clear existing display
+
+            if (recipes.length === 0) {
+                savedRecipesDiv.innerHTML = '<p>No recipes added yet.</p>';
+                return;
+            }
+
+            recipes.forEach((recipe, index) => {
+                const recipeItem = document.createElement('div');
+                recipeItem.classList.add('recipe-item');
+                recipeItem.innerHTML = `
+                    <h3>${recipe.name} (${recipe.servings} servings)</h3>
+                    <p><strong>Ingredients:</strong></p>
+                    <ul>
+                        ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                    </ul>
+                    <p><strong>Estimated Cost:</strong> ${recipe.cost ? `$${recipe.cost.toFixed(2)}` : 'N/A (Click Calculate Costs)'}</p>
+                    <button onclick="removeRecipe(${index})">Remove Recipe</button>
+                    <button onclick="addRecipeIngredientsToGroceryList(${index})">Add to Grocery List</button>
+                `;
+                savedRecipesDiv.appendChild(recipeItem);
+            });
+        }
+
+        function removeRecipe(index) {
+            if (confirm("Are you sure you want to remove this recipe?")) {
+                recipes.splice(index, 1);
+                localStorage.setItem('savedRecipes', JSON.stringify(recipes));
+                displaySavedRecipes();
+            }
+        }
+
+        function addRecipeIngredientsToGroceryList(index) {
+            const recipe = recipes[index];
+            if (recipe) {
+                const currentList = document.getElementById('groceryList').value.trim();
+                const newItems = recipe.ingredients.join('\n');
+                document.getElementById('groceryList').value = currentList ? `${currentList}\n${newItems}` : newItems;
+                alert(`Ingredients for "${recipe.name}" added to your grocery list!`);
+            }
+        }
+
+        function calculateRecipeCosts() {
+            recipes.forEach(recipe => {
+                let recipeTotalCost = 0;
+                recipe.ingredients.forEach(ingredientLine => {
+                    // Simple mock parsing: "1 lb Ground Beef" -> quantity 1, item "ground beef"
+                    const parts = ingredientLine.match(/^(\d+(\.\d+)?)\s*(lb|oz|pcs|units|bag|can|pkg)?\s*(.*)/i);
+                    let qty = 1;
+                    let item = ingredientLine;
+                    if (parts && parts[4]) {
+                        qty = parseFloat(parts[1]) || 1;
+                        item = parts[4].trim().toLowerCase();
+                    } else {
+                        // Fallback to treat the whole line as item if parsing fails
+                        item = ingredientLine.toLowerCase();
+                    }
+
+                    // For simplicity, let's use an average mock price across stores
+                    let averagePrice = 0;
+                    let priceCount = 0;
+                    mockStores.forEach(store => {
+                        const storePrice = store.prices[item];
+                        if (storePrice) {
+                            averagePrice += storePrice;
+                            priceCount++;
+                        }
+                    });
+                    averagePrice = priceCount > 0 ? averagePrice / priceCount : (Math.random() * 5 + 1); // Fallback if no specific price
+
+                    recipeTotalCost += qty * averagePrice;
+                });
+                recipe.cost = recipeTotalCost;
+            });
+            localStorage.setItem('savedRecipes', JSON.stringify(recipes));
+            displaySavedRecipes();
+            alert("Recipe costs calculated based on mock prices!");
+        }
+
+        // --- Spending Chart (using Chart.js) ---
+        let spendingChartInstance = null; // To hold the chart instance
+
+        function drawSpendingChart(data) {
+            const ctx = document.getElementById('spendingChart').getContext('2d');
+
+            // Destroy existing chart if it exists
+            if (spendingChartInstance) {
+                spendingChartInstance.destroy();
+            }
+
+            const labels = Object.keys(data);
+            const values = Object.values(data);
+
+            spendingChartInstance = new Chart(ctx, {
+                type: 'pie', // You can change this to 'bar', 'doughnut' etc.
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCE'
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Spending Breakdown by Category'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += '$' + context.parsed.toFixed(2);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        // Initial display of saved recipes on load
+        document.addEventListener('DOMContentLoaded', displaySavedRecipes);
+        document.addEventListener('DOMContentLoaded', filterStores); // Initial filter on load (if location is pre-set or defaults)
+
+    </script>
 </body>
 </html>
