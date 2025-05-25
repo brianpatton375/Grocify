@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery Price Matcher</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        textarea { width: 100%; height: 100px; }
+        button { margin-top: 10px; padding: 10px 20px; }
+        .results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Grocery Price Matcher</h1>
+    <p>Enter your grocery list below (one item per line):</p>
+    <textarea id="groceryList"></textarea><br>
+    <button onclick="comparePrices()">Compare Prices</button>
+    <div class="results" id="results"></div>
+
+    <script>
+        function comparePrices() {
+            const list = document.getElementById('groceryList').value.split('\n');
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<h2>Price Comparison Results:</h2>';
+            list.forEach(item => {
+                if(item.trim() !== '') {
+                    resultsDiv.innerHTML += `<p>${item.trim()}: $${(Math.random() * 10 + 1).toFixed(2)}</p>`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
